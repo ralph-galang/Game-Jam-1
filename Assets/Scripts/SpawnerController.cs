@@ -7,8 +7,8 @@ public class SpawnerController : MonoBehaviour
     [SerializeField] private Rigidbody[] objType;
     [SerializeField] private int spawnCount = 0;
     [SerializeField] private int currentIndex = 0;
-
-
+    [SerializeField] private float rotateSpd = 10f;
+  
     private void Awake()
     {
         EventBroadcaster.Instance.AddObserver("spawnObject", this.spawnObject);
@@ -35,6 +35,8 @@ public class SpawnerController : MonoBehaviour
             Vector3 direction = (player.position - transform.position).normalized;
             direction += new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.1f, 0.2f), Random.Range(-0.3f, 0.3f));
             spawnObject.AddForce(direction * 10f, ForceMode.Impulse);
+
+            spawnObject.angularVelocity = Random.insideUnitSphere * rotateSpd;
 
             yield return new WaitForSeconds(interval);
         }
