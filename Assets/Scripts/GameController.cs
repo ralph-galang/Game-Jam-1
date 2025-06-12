@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     [SerializeField] float slowMo=0.9f;
+    [SerializeField] bool enableSlowMo = false;
     private bool isPaused = false;
     private bool isWin = false;
     private int score = 0;
@@ -56,7 +57,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isWin) SlowMotion();
+        if (isWin && enableSlowMo) SlowMotion();
 
         if (Input.GetKeyDown(KeyCode.Escape) && !isWin)
         {
