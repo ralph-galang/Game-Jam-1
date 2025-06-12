@@ -19,12 +19,14 @@ public class MasterSpawner : MonoBehaviour
     {
         int[] splitCluster = randomSplit(spawners.Length, maxCluster);
 
-        for (int i = 0; i < spawners.Length; i++) { 
-        
-                spawners[i].setSpawnerCount(splitCluster[i]);
+        for (int i = 0; i < spawners.Length; i++)
+        {
+
+            spawners[i].setSpawnerCount(splitCluster[i]);
         }
 
-        for (int i = 0; i < spawners.Length; i++) {
+        for (int i = 0; i < spawners.Length; i++)
+        {
             spawners[i].Disable();
         }
 
@@ -63,7 +65,7 @@ public class MasterSpawner : MonoBehaviour
 
         for (int i = 0; i < spawnerAmount - 1; i++)
         {
-            int value = Random.Range(0, remainder+1);
+            int value = Random.Range(0, remainder + 1);
             result[i] = value;
             remainder = remainder - value;
         }

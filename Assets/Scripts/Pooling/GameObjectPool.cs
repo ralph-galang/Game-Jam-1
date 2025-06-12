@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class GameObjectPool : MonoBehaviour {
 
-	[SerializeField] private APoolable poolableObjectCopy; //the poolable object copy
+	[SerializeField] private APoolable[] poolableObjectCopy; //the poolable object copy
 	[SerializeField] private Transform poolableParent; //where the poolable object will spawn in the hierarchy
 	[SerializeField] private int maxPoolSize = 20; //the maxinum number of allowable reusable objects
 	[SerializeField] private bool fixedAllocation = true; //if TRUE, number of poolable objects instantiated is fixed. User cannot create poolable objects during run-time.
@@ -16,18 +16,31 @@ public class GameObjectPool : MonoBehaviour {
 	[SerializeField] private List<APoolable> availableObjects = new List<APoolable> ();
 	[SerializeField] private List<APoolable> usedObjects = new List<APoolable>();
 
+	private int poolCount = 0;
+
 	// Use this for initialization
 	void Start () {
-		this.poolableObjectCopy.gameObject.SetActive (false); //hide the poolable object copy
+        foreach (APoolable obj in poolableObjectCopy) obj.gameObject.SetActive(false);
+        // this.poolableObjectCopy.gameObject.SetActive (false); //hide the poolable object copy
 	}
 
 	public void Initialize() {
 		for (int i = 0; i < this.maxPoolSize; i++) {
-			APoolable poolableObject = GameObject.Instantiate<APoolable> (this.poolableObjectCopy, this.poolableParent);
-			poolableObject.Initialize ();
+			APoolable poolableObject = GameObject.Instantiate<APoolable>(FindObject(), this.poolableParent); // this.poolableObjectCopy[0]
+            poolableObject.Initialize ();
 			poolableObject.gameObject.SetActive (false);
 			this.availableObjects.Add (poolableObject);
 		}
+	}
+
+	private APoolable FindObject()
+	{
+		APoolable pooled = this.poolableObjectCopy[poolCount];
+
+        poolCount++; 
+		if (poolCount >= poolableObjectCopy.Length) poolCount = 0;
+
+		return pooled;
 	}
 
 	public bool HasObjectAvailable(int requestSize) {

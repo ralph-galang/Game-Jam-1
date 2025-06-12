@@ -3,6 +3,9 @@ using System.Collections;
 
 public class SpawnerController : MonoBehaviour
 {
+    [SerializeField] GameObjectPool pool;
+    private APoolable poolableObject;
+
     [SerializeField] private Transform player;
     [SerializeField] private Rigidbody[] objType;
     [SerializeField] private int spawnCount = 0;
@@ -31,7 +34,13 @@ public class SpawnerController : MonoBehaviour
             int randObj = Random.Range(0, objType.Length);
             float shootSpeed = Random.Range(15f, 30f);
 
-            Rigidbody spawnObject = Instantiate(objType[randObj], transform.position, Quaternion.identity);
+            if (pool.HasObjectAvailable(1))
+            {
+                poolableObject = pool.RequestPoolable();
+            }
+
+            Rigidbody spawnObject = poolableObject.GetComponent<Rigidbody>();
+            // Rigidbody spawnObject = Instantiate(objType[randObj], transform.position, Quaternion.identity);
             spawnObject.gameObject.SetActive(true);
 
             Vector3 direction = (player.position - transform.position).normalized;
@@ -46,7 +55,7 @@ public class SpawnerController : MonoBehaviour
         EventBroadcaster.Instance.PostEvent("finishSpawn");
     }
 
-    public void setSpawnerCount(int countVal){ spawnCount = countVal; }
+    public void setSpawnerCount(int countVal) { spawnCount = countVal; }
 
     public void Disable() { this.gameObject.SetActive(false); }
     public void Enable() { this.gameObject.SetActive(true); }
