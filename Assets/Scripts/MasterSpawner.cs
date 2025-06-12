@@ -28,7 +28,7 @@ public class MasterSpawner : MonoBehaviour
             spawners[i].Disable();
         }
 
-        StartCoroutine(startFirstSpawner(3));
+        StartCoroutine(startFirstSpawner(1));
     }
 
     IEnumerator startFirstSpawner(float timer)

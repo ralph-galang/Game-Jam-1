@@ -9,26 +9,52 @@ public class TsinelasController : MonoBehaviour
     [SerializeField] TsinelasData tsinelasData;
     [SerializeField] GameObject rotationController;
     [SerializeField] GameObject tsinelasModel;
+    [SerializeField] GameObject startingPoint;
 
     [SerializeField] Rigidbody rb;
     bool isSteering = false;
     Quaternion steerTarget;
 
     bool isRelaxed = false;
+    bool isPaused = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         EventBroadcaster.Instance.AddObserver(EventNames.WIN, this.Relax);
         EventBroadcaster.Instance.AddObserver(EventNames.LOSE, this.Relax);
-        rb.useGravity = false;
+        EventBroadcaster.Instance.AddObserver(EventNames.GAME_START, this.GameStart);
+        EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.SetUp);
+        SetUp();
     }
 
     void OnDestroy()
     {
         EventBroadcaster.Instance.RemoveObserver(EventNames.WIN);
         EventBroadcaster.Instance.RemoveObserver(EventNames.LOSE);
+        EventBroadcaster.Instance.RemoveObserver(EventNames.GAME_START);
+        EventBroadcaster.Instance.RemoveObserver(EventNames.GAME_RESTART);
     }
+
+    void SetUp()
+    {
+        DisableGravity();
+        EnableKinematic();
+        isRelaxed = false;
+        isPaused = true;
+        this.gameObject.transform.position = startingPoint.transform.position;
+        tsinelasModel.transform.position = startingPoint.transform.position;
+        tsinelasModel.transform.localRotation = startingPoint.transform.localRotation;
+        rotationController.transform.localRotation = Quaternion.identity;
+    }
+
+    void GameStart()
+    {
+        DisableGravity();
+        EnableKinematic();
+        isPaused = false;
+    }
+
     void ExplosionForce()
     {
         // Tsinelas bounces off of the Anak
@@ -38,10 +64,25 @@ public class TsinelasController : MonoBehaviour
     void Relax()
     {
         isRelaxed = true;
+        DisableKinematic();
         EnableGravity();
         ExplosionForce();
     }
 
+    void DisableKinematic()
+    {
+        rb.isKinematic = false;
+    }
+
+    void EnableKinematic()
+    {
+        rb.isKinematic = true;
+    }
+
+    void DisableGravity()
+    {
+        rb.useGravity = false;
+    }
     void EnableGravity()
     {
         rb.useGravity = true;
@@ -52,7 +93,7 @@ public class TsinelasController : MonoBehaviour
     {
         isSteering = false;
 
-        if (!isRelaxed) // Animation and Movement
+        if (!isRelaxed && !isPaused) // Animation and Movement
         {
             if (Input.GetKey(KeyCode.W))
             {

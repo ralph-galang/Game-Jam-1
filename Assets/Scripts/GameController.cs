@@ -5,6 +5,7 @@ public class GameController : MonoBehaviour
     [SerializeField] float slowMo=0.9f;
     [SerializeField] bool enableSlowMo = false;
     private bool isPaused = false;
+    private bool isStarted = false;
     private bool isWin = false;
     private int score = 0;
 
@@ -12,16 +13,19 @@ public class GameController : MonoBehaviour
     void Start()
     {
         EventBroadcaster.Instance.AddObserver(EventNames.WIN, this.Win);
+        EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.SetUp);
     }
 
     void onDestroy()
     {
         EventBroadcaster.Instance.RemoveObserver(EventNames.WIN);
+        EventBroadcaster.Instance.RemoveObserver(EventNames.GAME_RESTART);
     }
 
-    void onCollisionEnter(Collider other)
+    void SetUp()
     {
-        if (other.tag == "Anak") Debug.Log("Collision Detected");//EventBroadcaster.Instance.PostEvent(EventNames.WIN);
+        isWin = false;
+        isStarted = false;
     }
 
     void Win()
@@ -64,10 +68,16 @@ public class GameController : MonoBehaviour
             TogglePause();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Return) && !isStarted)
         {
-            Debug.Log("Spawn 1 clutter");
-            EventBroadcaster.Instance.PostEvent("spawnObject");
+            isStarted = true;
+            EventBroadcaster.Instance.PostEvent(EventNames.GAME_START);
+            
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            EventBroadcaster.Instance.PostEvent(EventNames.GAME_RESTART);
         }
     }
 }

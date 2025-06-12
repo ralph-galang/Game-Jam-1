@@ -8,6 +8,8 @@ using System.Collections;
 public class EventNames {
 	public const string WIN = "WIN";
 	public const string LOSE = "LOSE";
+	public const string GAME_START = "GAME_START";
+	public const string GAME_RESTART = "GAME_RESTART";
 	public const string SPAWN_CLUTTER = "SPAWN_CLUTTER";
 
 	public const string ON_UPDATE_SCORE = "ON_UPDATE_SCORE";
