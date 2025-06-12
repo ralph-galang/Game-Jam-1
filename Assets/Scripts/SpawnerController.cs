@@ -6,7 +6,6 @@ public class SpawnerController : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Rigidbody[] objType;
     [SerializeField] private int spawnCount = 0;
-    [SerializeField] private int currentIndex = 0;
     [SerializeField] private float rotateSpd = 10f;
 
     private void Awake()
