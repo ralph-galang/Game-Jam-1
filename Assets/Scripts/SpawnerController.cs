@@ -18,9 +18,10 @@ public class SpawnerController : MonoBehaviour
 
     void spawnObject()
     {
-   
-        StartCoroutine(SpawnItems(1f));
-  
+        if (this.isActiveAndEnabled)
+        {
+            StartCoroutine(SpawnItems(1f));
+        }
     }
 
     IEnumerator SpawnItems(float interval)

@@ -40,8 +40,11 @@ public class MasterSpawner : MonoBehaviour
 
     private void Update()
     {
-        Vector3 setPosition = player.position + player.forward * maxHorizontalDistance + Vector3.up * maxVerticallDistance; 
-        spawners[currentIndex].transform.position = setPosition;
+        Vector3 setPosition = player.position + player.forward * maxHorizontalDistance + Vector3.up * maxVerticallDistance;
+        if (currentIndex < spawners.Length)
+        {
+            spawners[currentIndex].transform.position = setPosition;
+        }
     }
     void nextSpawner()
     {
