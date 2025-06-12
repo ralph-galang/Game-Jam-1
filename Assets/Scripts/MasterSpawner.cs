@@ -21,7 +21,7 @@ public class MasterSpawner : MonoBehaviour
 
         for (int i = 0; i < spawners.Length; i++) { 
         
-            spawners[i].setSpawnerCount(splitCluster[i]);
+                spawners[i].setSpawnerCount(splitCluster[i]);
         }
 
         for (int i = 0; i < spawners.Length; i++) {

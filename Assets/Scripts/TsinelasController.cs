@@ -2,12 +2,10 @@ using UnityEngine;
 
 public class TsinelasController : MonoBehaviour
 {
-    [SerializeField] GameObject temp;
-    
+    [SerializeField] GameObject explosionEpicenter;
     [SerializeField] float explosionForce = 10.0f;
     [SerializeField] float explosionRadius = 5.0f;
     [SerializeField] float upwardMod = 1.0f;
-    //TEMP ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     [SerializeField] TsinelasData tsinelasData;
     [SerializeField] GameObject rotationController;
     [SerializeField] GameObject tsinelasModel;
@@ -21,20 +19,27 @@ public class TsinelasController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        EventBroadcaster.Instance.AddObserver(EventNames.HEAD_HIT, this.Relax);
-        rb.AddForce(this.gameObject.transform.forward * tsinelasData.forwardSpeed);
+        EventBroadcaster.Instance.AddObserver(EventNames.WIN, this.Relax);
+        EventBroadcaster.Instance.AddObserver(EventNames.LOSE, this.Relax);
         rb.useGravity = false;
     }
 
-    void onDestroy()
+    void OnDestroy()
     {
-        EventBroadcaster.Instance.RemoveObserver(EventNames.HEAD_HIT);
+        EventBroadcaster.Instance.RemoveObserver(EventNames.WIN);
+        EventBroadcaster.Instance.RemoveObserver(EventNames.LOSE);
+    }
+    void ExplosionForce()
+    {
+        // Tsinelas bounces off of the Anak
+        rb.AddExplosionForce(explosionForce, explosionEpicenter.transform.position, explosionRadius, upwardMod);
     }
 
     void Relax()
     {
         isRelaxed = true;
         EnableGravity();
+        ExplosionForce();
     }
 
     void EnableGravity()
@@ -46,54 +51,49 @@ public class TsinelasController : MonoBehaviour
     void Update()
     {
         isSteering = false;
-        if (Input.GetKey(KeyCode.W))
-        {
-            isSteering = true;
-            this.gameObject.transform.position += this.gameObject.transform.up * tsinelasData.speed * Time.deltaTime;
-            steerTarget = Quaternion.Euler(new Vector3(-30.0f, 0.0f, 0.0f));
-            rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
-        }
 
-        if (Input.GetKey(KeyCode.S))
+        if (!isRelaxed) // Animation and Movement
         {
-            isSteering = true;
-            this.gameObject.transform.position -= this.gameObject.transform.up * tsinelasData.speed * Time.deltaTime;
-            steerTarget = Quaternion.Euler(new Vector3(30.0f, 0.0f, 0.0f));
-            rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
-        }
+            if (Input.GetKey(KeyCode.W))
+            {
+                isSteering = true;
+                this.gameObject.transform.position += this.gameObject.transform.up * tsinelasData.speed * Time.deltaTime;
+                steerTarget = Quaternion.Euler(new Vector3(-tsinelasData.angleOfSteering, 0.0f, 0.0f));
+                rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
+            }
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            isSteering = true;
-            this.gameObject.transform.position -= this.gameObject.transform.right * tsinelasData.speed * Time.deltaTime;
-            steerTarget = Quaternion.Euler(new Vector3(0.0f, 0.0f, 30.0f));
-            rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
-        }
+            if (Input.GetKey(KeyCode.S))
+            {
+                isSteering = true;
+                this.gameObject.transform.position -= this.gameObject.transform.up * tsinelasData.speed * Time.deltaTime;
+                steerTarget = Quaternion.Euler(new Vector3(tsinelasData.angleOfSteering, 0.0f, 0.0f));
+                rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
+            }
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            isSteering = true;
-            this.gameObject.transform.position += this.gameObject.transform.right * tsinelasData.speed * Time.deltaTime;
-            steerTarget = Quaternion.Euler(new Vector3(0.0f, 0.0f, -30.0f));
-            rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
-        }
+            if (Input.GetKey(KeyCode.A))
+            {
+                isSteering = true;
+                this.gameObject.transform.position -= this.gameObject.transform.right * tsinelasData.speed * Time.deltaTime;
+                steerTarget = Quaternion.Euler(new Vector3(0.0f, 0.0f, tsinelasData.angleOfSteering));
+                rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
+            }
 
-        if (Input.GetKey(KeyCode.Space))
-        {
-            rb.AddForce(this.gameObject.transform.forward * tsinelasData.dashSpeed);
-        }
+            if (Input.GetKey(KeyCode.D))
+            {
+                isSteering = true;
+                this.gameObject.transform.position += this.gameObject.transform.right * tsinelasData.speed * Time.deltaTime;
+                steerTarget = Quaternion.Euler(new Vector3(0.0f, 0.0f, -tsinelasData.angleOfSteering));
+                rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, steerTarget, tsinelasData.steeringSpeed * Time.deltaTime);
+            }
 
-        if (!isSteering) rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, Quaternion.identity, tsinelasData.courseCorrect * Time.deltaTime);
-
-        if (!isRelaxed)
-        {
+            // Move Tsinelas Forward
             this.gameObject.transform.position += this.gameObject.transform.forward * tsinelasData.forwardSpeed * Time.deltaTime;
-            tsinelasModel.transform.Rotate(0.0f, 0.0f, tsinelasData.spinSpeed * Time.deltaTime, Space.Self);
-        }
 
-        if (isRelaxed)
-        {
-            rb.AddExplosionForce(explosionForce, temp.transform.position, explosionRadius, upwardMod);
+            // Spin Tsinelas Model
+            tsinelasModel.transform.Rotate(0.0f, 0.0f, tsinelasData.spinSpeed * Time.deltaTime, Space.Self);
+
+            // When the player is not steering, correct the orientation of the spin of the tsinelas
+            if (!isSteering) rotationController.transform.localRotation = Quaternion.Slerp(rotationController.transform.localRotation, Quaternion.identity, tsinelasData.courseCorrect * Time.deltaTime);
         }
     }
 }

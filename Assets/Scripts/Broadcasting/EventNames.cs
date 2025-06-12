@@ -6,7 +6,9 @@ using System.Collections;
  * Created By: NeilDG
  */ 
 public class EventNames {
-	public const string HEAD_HIT = "HEAD_HIT";
+	public const string WIN = "WIN";
+	public const string LOSE = "LOSE";
+	public const string SPAWN_CLUTTER = "SPAWN_CLUTTER";
 
 	public const string ON_UPDATE_SCORE = "ON_UPDATE_SCORE";
 	public const string ON_CORRECT_MATCH = "ON_CORRECT_MATCH";

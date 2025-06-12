@@ -8,10 +8,12 @@ public class SpawnerController : MonoBehaviour
     [SerializeField] private int spawnCount = 0;
     [SerializeField] private int currentIndex = 0;
     [SerializeField] private float rotateSpd = 10f;
-  
+
     private void Awake()
     {
         EventBroadcaster.Instance.AddObserver("spawnObject", this.spawnObject);
+
+        Enable();
     }
 
     void spawnObject()

@@ -2,23 +2,30 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] float slowMo=0.9f;
     private bool isPaused = false;
-    private bool isHeadHit = false;
+    private bool isWin = false;
     private int score = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        EventBroadcaster.Instance.AddObserver(EventNames.HEAD_HIT, this.HeadHit);
+        EventBroadcaster.Instance.AddObserver(EventNames.WIN, this.Win);
     }
 
     void onDestroy()
     {
-        EventBroadcaster.Instance.RemoveObserver(EventNames.HEAD_HIT);
+        EventBroadcaster.Instance.RemoveObserver(EventNames.WIN);
     }
-    void HeadHit()
+
+    void onCollisionEnter(Collider other)
     {
-        isHeadHit = true;
+        if (other.tag == "Anak") Debug.Log("Collision Detected");//EventBroadcaster.Instance.PostEvent(EventNames.WIN);
+    }
+
+    void Win()
+    {
+        isWin = true;
         score++;
     }
 
@@ -42,17 +49,24 @@ public class GameController : MonoBehaviour
 
     void SlowMotion()
     {
-        Time.timeScale -= 0.005f;
+        if (Time.timeScale >= slowMo) Time.timeScale -= 0.05f;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isHeadHit && Time.timeScale >= 0.75f) SlowMotion(); 
+        if (isWin) SlowMotion();
 
-        if (Input.GetKeyDown(KeyCode.Escape) && !isHeadHit)
+        if (Input.GetKeyDown(KeyCode.Escape) && !isWin)
         {
             TogglePause();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Spawn 1 clutter");
+            EventBroadcaster.Instance.PostEvent("spawnObject");
         }
     }
 }
