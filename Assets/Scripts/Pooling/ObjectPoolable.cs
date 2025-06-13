@@ -3,19 +3,17 @@ using System.Collections;
 
 public class ObjectPoolable : APoolable
 {
-
-    
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
-        
+        EventBroadcaster.Instance.AddObserver("ClearPool", this.ClearPool);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ClearPool()
     {
-        
+        if (isActiveAndEnabled)
+        {
+            this.poolRef.ReleasePoolable(this);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -57,5 +55,9 @@ public class ObjectPoolable : APoolable
     public override void OnActivate()
     {
 
+    }
+    void OnDestroy()
+    {
+        EventBroadcaster.Instance.RemoveObserver("ClearPool");
     }
 }

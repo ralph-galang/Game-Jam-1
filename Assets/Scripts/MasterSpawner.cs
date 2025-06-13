@@ -13,7 +13,9 @@ public class MasterSpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+        EventBroadcaster.Instance.AddObserver("startSpawn", this.startSpawn);
         EventBroadcaster.Instance.AddObserver("finishSpawn", this.nextSpawner);
+        EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.disableSpawn);
     }
     void Start()
     {
@@ -29,7 +31,18 @@ public class MasterSpawner : MonoBehaviour
         {
             spawners[i].Disable();
         }
+    }
 
+    private void disableSpawn()
+    {
+        for (int i = 0; i < spawners.Length; i++)
+        {
+            spawners[i].Disable();
+        }
+    }
+
+    private void startSpawn()
+    {
         StartCoroutine(startFirstSpawner(1));
     }
 
@@ -37,7 +50,7 @@ public class MasterSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(timer);
         spawners[currentIndex].Enable();
-        // EventBroadcaster.Instance.PostEvent("spawnObject");
+        EventBroadcaster.Instance.PostEvent("spawnObject");
     }
 
     private void Update()
@@ -56,6 +69,7 @@ public class MasterSpawner : MonoBehaviour
         {
             spawners[currentIndex].Enable();
             EventBroadcaster.Instance.PostEvent("spawnObject");
+
         }
     }
     private int[] randomSplit(int spawnerAmount, int clusterAmount)
