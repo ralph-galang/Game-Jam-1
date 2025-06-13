@@ -66,9 +66,12 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && !isWin)
         {
             TogglePause();
+            Parameters pauseVal = new Parameters();
+            pauseVal.PutExtra("PauseVal", isPaused);
+            EventBroadcaster.Instance.PostEvent(EventNames.GAME_PAUSE, pauseVal);
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) && !isStarted)
+        if (Input.GetKeyDown(KeyCode.Tab) && !isStarted)
         {
             isStarted = true;
             EventBroadcaster.Instance.PostEvent(EventNames.GAME_START);
