@@ -37,7 +37,7 @@ public class MasterSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(timer);
         spawners[currentIndex].Enable();
-        EventBroadcaster.Instance.PostEvent("spawnObject");
+        // EventBroadcaster.Instance.PostEvent("spawnObject");
     }
 
     private void Update()

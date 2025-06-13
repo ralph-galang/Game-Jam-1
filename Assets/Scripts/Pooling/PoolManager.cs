@@ -5,6 +5,16 @@ public class PoolManager : MonoBehaviour
 {
     [SerializeField] GameObjectPool pool;
 
+    private void Awake()
+    {
+        EventBroadcaster.Instance.AddObserver("ClearPool", this.ClearPool);
+    }
+
+    private void ClearPool()
+    {
+        pool.RequestPoolable();
+    }
+
     void Start()
     {
         pool.Initialize();
@@ -24,5 +34,10 @@ public class PoolManager : MonoBehaviour
 
         //    this.spawnInterval = Random.Range(0.5f, 1.0f);
         //}
+    }
+
+    void OnDestroy()
+    {
+        EventBroadcaster.Instance.RemoveObserver("ClearPool");
     }
 }

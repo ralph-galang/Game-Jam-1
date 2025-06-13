@@ -43,6 +43,8 @@ public class SpawnerController : MonoBehaviour
             // Rigidbody spawnObject = Instantiate(objType[randObj], transform.position, Quaternion.identity);
             spawnObject.gameObject.SetActive(true);
 
+            poolableObject.transform.position = this.transform.position;
+
             Vector3 direction = (player.position - transform.position).normalized;
             direction += new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.1f, 0.2f), Random.Range(-0.3f, 0.3f));
             spawnObject.AddForce(direction * 10f, ForceMode.Impulse);

@@ -18,8 +18,10 @@ public class GameObjectPool : MonoBehaviour {
 
 	private int poolCount = 0;
 
-	// Use this for initialization
-	void Start () {
+  
+
+    // Use this for initialization
+    void Start () {
         foreach (APoolable obj in poolableObjectCopy) obj.gameObject.SetActive(false);
         // this.poolableObjectCopy.gameObject.SetActive (false); //hide the poolable object copy
 	}

@@ -4,6 +4,7 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] float slowMo=0.9f;
     [SerializeField] bool enableSlowMo = false;
+    public GameObjectPool pool;
     private bool isPaused = false;
     private bool isStarted = false;
     private bool isWin = false;
@@ -75,12 +76,14 @@ public class GameController : MonoBehaviour
         {
             isStarted = true;
             EventBroadcaster.Instance.PostEvent(EventNames.GAME_START);
-            
+            Debug.Log("Game has Started");
+            EventBroadcaster.Instance.PostEvent("spawnObject");
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
             EventBroadcaster.Instance.PostEvent(EventNames.GAME_RESTART);
+            EventBroadcaster.Instance.PostEvent("ClearPool");
         }
     }
 }
