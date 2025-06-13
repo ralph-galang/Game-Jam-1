@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class TsinelasCollision : MonoBehaviour
 {
+    AudioSource whipSFX;
     private Rigidbody rb;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.SetUp);
+        whipSFX = GetComponent<AudioSource>();
     }
 
     void onDestroy()
@@ -36,6 +38,7 @@ public class TsinelasCollision : MonoBehaviour
             EventBroadcaster.Instance.PostEvent(EventNames.WIN);
         }
         this.enabled = false;
+        whipSFX.Play();
     }
 }
 

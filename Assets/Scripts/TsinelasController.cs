@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class TsinelasController : MonoBehaviour
 {
+    AudioSource flyingSFX;
+    bool isPlayingFlyingSFX;
     [SerializeField] GameObject explosionEpicenter;
     [SerializeField] float explosionForce = 10.0f;
     [SerializeField] float explosionRadius = 5.0f;
@@ -23,6 +25,7 @@ public class TsinelasController : MonoBehaviour
     {
         EventBroadcaster.Instance.AddObserver(EventNames.WIN, this.Relax);
         EventBroadcaster.Instance.AddObserver(EventNames.LOSE, this.Relax);
+        EventBroadcaster.Instance.AddObserver(EventNames.GAME_PAUSE, this.Pause);
         EventBroadcaster.Instance.AddObserver(EventNames.GAME_START, this.GameStart);
         EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.SetUp);
         SetUp();
@@ -46,6 +49,9 @@ public class TsinelasController : MonoBehaviour
         tsinelasModel.transform.position = startingPoint.transform.position;
         tsinelasModel.transform.localRotation = startingPoint.transform.localRotation;
         rotationController.transform.localRotation = Quaternion.identity;
+        flyingSFX = GetComponent<AudioSource>();
+        SetAudioVolume(0.0f);
+        isPlayingFlyingSFX = false;
     }
 
     void GameStart()
@@ -53,6 +59,8 @@ public class TsinelasController : MonoBehaviour
         DisableGravity();
         EnableKinematic();
         isPaused = false;
+        SetAudioVolume(1.0f);
+        isPlayingFlyingSFX = true;
     }
 
     void ExplosionForce()
@@ -64,9 +72,11 @@ public class TsinelasController : MonoBehaviour
     void Relax()
     {
         isRelaxed = true;
+        isPlayingFlyingSFX = false;
         DisableKinematic();
         EnableGravity();
         ExplosionForce();
+        SetAudioVolume(0.0f);
     }
 
     void DisableKinematic()
@@ -88,10 +98,28 @@ public class TsinelasController : MonoBehaviour
         rb.useGravity = true;
     }
 
+    void SetAudioVolume(float volume)
+    {
+        flyingSFX.volume=volume;
+    }
+    void Pause(Parameters param)
+    {
+        isPaused = param.GetBoolExtra("PauseVal", false);
+    }
+
     // Update is called once per frame
     void Update()
     {
         isSteering = false;
+
+        if (!isPaused && isPlayingFlyingSFX)
+        {
+            SetAudioVolume(1.0f);
+        }
+        else
+        {
+            SetAudioVolume(0.0f);
+        }
 
         if (!isRelaxed && !isPaused) // Animation and Movement
         {
