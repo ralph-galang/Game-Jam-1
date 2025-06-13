@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
     public void CloseStartScreenMenu()
     {
         StartScreenMenu.SetActive(false);
+        CloseCreditsScreen();
         isStartScreenOpen = false;
     }
     public void OpenStartScreenMenu()
