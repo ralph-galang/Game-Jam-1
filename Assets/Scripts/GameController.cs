@@ -76,14 +76,14 @@ public class GameController : MonoBehaviour
         {
             isStarted = true;
             EventBroadcaster.Instance.PostEvent(EventNames.GAME_START);
-            Debug.Log("Game has Started");
+            //Debug.Log("Game has Started");
             EventBroadcaster.Instance.PostEvent("startSpawn");
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
             EventBroadcaster.Instance.PostEvent(EventNames.GAME_RESTART);
-            Debug.Log("Clear clutter");
+            //Debug.Log("Clear clutter");
             EventBroadcaster.Instance.PostEvent("ClearPool");
         }
     }

@@ -28,28 +28,27 @@ public class SpawnerController : MonoBehaviour
 
     IEnumerator SpawnItems(float interval)
     {
-        Debug.Log("start spawning");
+        // Debug.Log("start spawning");
         for (int i = 0; i < spawnCount; i++)
         {
             int randObj = Random.Range(0, objType.Length);
             float shootSpeed = Random.Range(15f, 30f);
-
+            //Debug.Log(pool.HasObjectAvailable(1));
             if (pool.HasObjectAvailable(1))
             {
                 poolableObject = pool.RequestPoolable();
+                Rigidbody spawnObject = poolableObject.GetComponent<Rigidbody>();
+                // Rigidbody spawnObject = Instantiate(objType[randObj], transform.position, Quaternion.identity);
+                spawnObject.gameObject.SetActive(true);
+
+                poolableObject.transform.position = this.transform.position;
+
+                Vector3 direction = (player.position - transform.position).normalized;
+                direction += new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.1f, 0.2f), Random.Range(-0.3f, 0.3f));
+                spawnObject.AddForce(direction * 10f, ForceMode.Impulse);
+
+                spawnObject.angularVelocity = Random.insideUnitSphere * rotateSpd;
             }
-
-            Rigidbody spawnObject = poolableObject.GetComponent<Rigidbody>();
-            // Rigidbody spawnObject = Instantiate(objType[randObj], transform.position, Quaternion.identity);
-            spawnObject.gameObject.SetActive(true);
-
-            poolableObject.transform.position = this.transform.position;
-
-            Vector3 direction = (player.position - transform.position).normalized;
-            direction += new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.1f, 0.2f), Random.Range(-0.3f, 0.3f));
-            spawnObject.AddForce(direction * 10f, ForceMode.Impulse);
-
-            spawnObject.angularVelocity = Random.insideUnitSphere * rotateSpd;
 
             yield return new WaitForSeconds(interval);
         }

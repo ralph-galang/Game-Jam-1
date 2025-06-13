@@ -16,6 +16,7 @@ public class MasterSpawner : MonoBehaviour
         EventBroadcaster.Instance.AddObserver("startSpawn", this.startSpawn);
         EventBroadcaster.Instance.AddObserver("finishSpawn", this.nextSpawner);
         EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.disableSpawn);
+        EventBroadcaster.Instance.AddObserver(EventNames.GAME_RESTART, this.ResetCurrentIndex);
     }
     void Start()
     {
@@ -31,6 +32,11 @@ public class MasterSpawner : MonoBehaviour
         {
             spawners[i].Disable();
         }
+    }
+
+    private void ResetCurrentIndex()
+    {
+        currentIndex = 0;
     }
 
     private void disableSpawn()
